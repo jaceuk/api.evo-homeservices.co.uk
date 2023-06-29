@@ -1,8 +1,32 @@
-body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+.nowrap {
+  white-space: nowrap;
 }
 
-a {
-  color: #00B7FF;
+.wrapper {
+  max-width: 1400px;
+  width: 100%;
+  margin: auto;
+}
+
+.navbar {
+  margin-bottom: 32px;
+}
+
+.navbar .wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.navbar-brand {
+  padding-top: 0;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+td {
+  vertical-align: middle;
 }

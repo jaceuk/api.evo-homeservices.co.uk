@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "dev": "nodemon -e js,hbs ./bin/www"
+    "dev": "nodemon -e js,hbs,css ./bin/www"
   },
   "dependencies": {
     "better-sqlite3": "^8.4.0",

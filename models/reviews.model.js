@@ -9,9 +9,31 @@ exports.getAll = function () {
   const sql = `SELECT * FROM ${table}`;
 
   try {
-    const result = db.prepare(sql).all();
+    const results = db.prepare(sql).all();
     db.close();
-    return result;
+    return results;
+  } catch (error) {
+    throw error;
+  }
+};
+
+exports.addPostcodes = function () {
+  const db = new Database(database);
+
+  const sql = `SELECT * FROM ${table}`;
+
+  try {
+    const results = db.prepare(sql).all();
+
+    results.forEach((result) => {
+      const sql = `UPDATE ${table} SET postcode = ?
+      INNER JOIN towns ON ${tableName}.location = towns.id
+      WHERE id = ?`;
+
+      db.prepare(sql).all('towns.postcode', result.id);
+    });
+
+    db.close();
   } catch (error) {
     throw error;
   }
