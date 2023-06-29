@@ -10,3 +10,11 @@
     </div>
   </div>
 </nav>
+
+{{#if message}}
+  <div class='wrapper'>
+    <div class='alert alert-{{messageType}}'>
+      {{message}}
+    </div>
+  </div>
+{{/if}}

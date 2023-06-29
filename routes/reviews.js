@@ -3,7 +3,11 @@ var router = express.Router();
 var reviewsController = require('../controllers/reviews.controller');
 
 router.get('/', reviewsController.getAll);
+router.get('/add', reviewsController.getAdd);
+router.post('/add', reviewsController.add);
+router.get('/delete/:id', reviewsController.delete);
 
-router.post('/postcodes', reviewsController.addPostcodes);
+// router.get('/edit', reviewsController.edit);
+// router.post('/update', reviewsController.update);
 
 module.exports = router;

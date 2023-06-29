@@ -1,4 +1,7 @@
-<h1>{{title}}</h1>
+<div class='title'>
+  <h1>Reviews</h1>
+  <a href='/reviews/add' class='btn btn-primary'>Add new review</a>
+</div>
 
 <table class='table table-striped'>
   <thead>
@@ -15,9 +18,12 @@
       <tr>
         <td class='nowrap'>{{this.date}}</td>
         <td>{{this.title}}</td>
-        <td>{{this.town}}</td>
+        <td>{{this.postcode}}</td>
         <td class='actions'>
-          <button type='button' class='btn btn-danger'>Delete</button>
+          <a
+            href='/reviews/delete/{{this.id}}'
+            class='btn btn-danger'
+          >Delete</a>
           <button type='button' class='btn btn-warning'>Edit</button>
         </td>
       </tr>
