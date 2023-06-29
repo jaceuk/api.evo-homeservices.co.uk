@@ -1,10 +1,7 @@
-var express = require("express");
+var express = require('express');
 var router = express.Router();
+var reviewsController = require('../controllers/reviews.controller');
 
-router.get("/", function (req, res, next) {
-  res.render("reviews", {
-    title: "Reviews",
-  });
-});
+router.get('/', reviewsController.getAll);
 
 module.exports = router;
