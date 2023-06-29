@@ -1,23 +1,15 @@
-const sqlite3 = require('sqlite3');
-const { open } = require('sqlite');
+const Database = require('better-sqlite3');
 
-let db;
+let database = './db/evo.db';
 const table = 'reviews';
 
-async function dbConnect() {
-  return open({
-    filename: './db/evo.db',
-    driver: sqlite3.Database,
-  });
-}
-
-exports.getAll = async function () {
-  const db = await dbConnect();
+exports.getAll = function () {
+  const db = new Database(database);
 
   const sql = `SELECT * FROM ${table}`;
 
   try {
-    const result = await db.all(sql);
+    const result = db.prepare(sql).all();
     db.close();
     return result;
   } catch (error) {
