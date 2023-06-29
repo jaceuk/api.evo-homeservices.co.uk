@@ -58,3 +58,31 @@ exports.delete = function (id) {
     throw error;
   }
 };
+
+exports.get = function (id) {
+  const db = new Database(database);
+
+  const sql = `SELECT * FROM ${table} WHERE id = ?`;
+
+  try {
+    const results = db.prepare(sql).get(id);
+    db.close();
+    return results;
+  } catch (error) {
+    throw error;
+  }
+};
+
+exports.update = function (date, postcode, title, text, id) {
+  const db = new Database(database);
+
+  const sql = `UPDATE  ${table} SET date = ?, postcode = ?, title = ?, text = ? WHERE id = ?`;
+
+  try {
+    const results = db.prepare(sql).run(date, postcode, title, text, id);
+    db.close();
+    return results;
+  } catch (error) {
+    throw error;
+  }
+};

@@ -10,6 +10,7 @@
       <th scope='col'>Title</th>
       <th scope='col'>Postcode</th>
       <th></th>
+      <th></th>
     </tr>
   </thead>
   <tbody>
@@ -19,12 +20,14 @@
         <td class='nowrap'>{{this.date}}</td>
         <td>{{this.title}}</td>
         <td>{{this.postcode}}</td>
-        <td class='actions'>
+        <td>
           <a
             href='/reviews/delete/{{this.id}}'
             class='btn btn-danger'
           >Delete</a>
-          <button type='button' class='btn btn-warning'>Edit</button>
+        </td>
+        <td>
+          <a href='/reviews/edit/{{this.id}}' class='btn btn-warning'>Edit</a>
         </td>
       </tr>
     {{/each}}

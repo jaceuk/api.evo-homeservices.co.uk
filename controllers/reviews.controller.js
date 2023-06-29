@@ -17,6 +17,7 @@ exports.getAdd = (req, res, next) => {
   res.render('reviews/form', {
     title: 'Add new review ',
     postcodes: postcodes,
+    formAction: '/reviews/add',
   });
 };
 
@@ -40,6 +41,7 @@ exports.add = (req, res, next) => {
   res.render('reviews/form', {
     title: 'Add new review ',
     postcodes: postcodes,
+    formAction: '/reviews/add',
     review: req.body,
     messageType: 'danger',
     message: 'Something went wrong, please try again.',
@@ -59,4 +61,45 @@ exports.delete = (req, res, next) => {
   req.flash('messageType', 'success');
   req.flash('message', 'Review deleted successfully.');
   res.redirect('/reviews');
+};
+
+exports.edit = (req, res, next) => {
+  const postcodes = reviewsModel.getPostcodes();
+
+  const result = reviewsModel.get(req.params.id);
+
+  res.render('reviews/form', {
+    title: 'Edit review ',
+    postcodes: postcodes,
+    review: result,
+    formAction: '/reviews/update',
+  });
+};
+
+exports.update = (req, res, next) => {
+  const postcodes = reviewsModel.getPostcodes();
+
+  const result = reviewsModel.update(
+    req.body.date,
+    req.body.postcode,
+    req.body.title,
+    req.body.text,
+    req.body.id
+  );
+
+  if (result) {
+    req.flash('messageType', 'success');
+    req.flash('message', 'Review updated.');
+    res.redirect('/reviews');
+    return;
+  }
+
+  res.render('reviews/form', {
+    title: 'Edit review ',
+    postcodes: postcodes,
+    formAction: '/reviews/update',
+    review: req.body,
+    messageType: 'danger',
+    message: 'Something went wrong, please try again.',
+  });
 };
