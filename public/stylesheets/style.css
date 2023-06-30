@@ -6,6 +6,12 @@
   max-width: 1200px;
   width: 100%;
   margin: auto;
+  padding: 0 32px;
+}
+
+.form-wrapper {
+  max-width: 600px;
+  width: 100%;
 }
 
 .navbar {

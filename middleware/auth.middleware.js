@@ -31,6 +31,6 @@ exports.auth = (req, res, next) => {
 
 // only allow admin access
 exports.authAdmin = (req, res, next) => {
-  if (req.session.admin != 1) return res.redirect('/');
+  if (req.session.admin != 1) return res.redirect('/login');
   next();
 };
