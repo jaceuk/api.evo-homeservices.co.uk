@@ -20,6 +20,7 @@ liveReloadServer.server.once('connection', () => {
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const reviewsRouter = require('./routes/reviews');
+const apiRouter = require('./routes/api');
 
 const app = express();
 app.use(connectLiveReload());
@@ -80,6 +81,7 @@ app.use(flash());
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/reviews', reviewsRouter);
+app.use('/api', apiRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

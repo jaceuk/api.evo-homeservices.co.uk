@@ -37,7 +37,7 @@ exports.login = async (req, res, next) => {
 
   const payload = {
     userId: user.id.toString(),
-    username: user.username,
+    username: user.name,
   };
   const accessToken = jwt.sign(payload, process.env.SECRET_JWT, {
     expiresIn: process.env.SECRET_JWT_EXPIRES,
@@ -48,10 +48,10 @@ exports.login = async (req, res, next) => {
   // store variables in session to identify if logged in in the templates
   req.session.admin = user.admin;
   req.session.userId = user.id;
-  req.session.username = user.username;
+  req.session.username = user.name;
 
   req.flash('messageType', 'success');
-  req.flash('message', 'Login successful, welcome back ' + user.username);
+  req.flash('message', 'Login successful, welcome back ' + user.name);
   res.redirect('/');
   return;
 };
