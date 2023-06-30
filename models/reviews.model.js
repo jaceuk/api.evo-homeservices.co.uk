@@ -1,6 +1,6 @@
 const Database = require('better-sqlite3');
 
-let database = './db/evo.db';
+const database = './db/evo.db';
 const table = 'reviews';
 
 exports.getAll = function () {

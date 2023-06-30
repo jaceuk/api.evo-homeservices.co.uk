@@ -6,12 +6,23 @@ const session = require('express-session');
 const logger = require('morgan');
 const hbs = require('hbs');
 const flash = require('connect-flash');
+const livereload = require('livereload');
+const connectLiveReload = require('connect-livereload');
+
+const liveReloadServer = livereload.createServer();
+liveReloadServer.server.once('connection', () => {
+  setTimeout(() => {
+    liveReloadServer.refresh('/');
+  }, 100);
+});
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const reviewsRouter = require('./routes/reviews');
 
 const app = express();
+app.use(connectLiveReload());
+
 const sessionStore = new session.MemoryStore();
 
 // view engine setup
