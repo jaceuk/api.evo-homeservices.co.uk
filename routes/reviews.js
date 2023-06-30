@@ -1,12 +1,13 @@
 var express = require('express');
 var router = express.Router();
 var reviewsController = require('../controllers/reviews.controller');
+const { auth } = require('../middleware/auth.middleware');
 
-router.get('/', reviewsController.getAll);
-router.get('/add', reviewsController.getAdd);
-router.post('/add', reviewsController.add);
-router.get('/delete/:id', reviewsController.delete);
-router.get('/edit/:id', reviewsController.edit);
-router.post('/update', reviewsController.update);
+router.get('/', auth, reviewsController.homePage);
+router.get('/add', auth, reviewsController.addPage);
+router.post('/add', auth, reviewsController.add);
+router.get('/delete/:id', auth, reviewsController.delete);
+router.get('/edit/:id', auth, reviewsController.edit);
+router.post('/update', auth, reviewsController.update);
 
 module.exports = router;

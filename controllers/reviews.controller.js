@@ -1,6 +1,6 @@
 const reviewsModel = require('../models/reviews.model.js');
 
-exports.getAll = (req, res, next) => {
+exports.homePage = (req, res, next) => {
   const reviews = reviewsModel.getAll();
 
   res.render('reviews/list', {
@@ -11,7 +11,7 @@ exports.getAll = (req, res, next) => {
   });
 };
 
-exports.getAdd = (req, res, next) => {
+exports.addPage = (req, res, next) => {
   const postcodes = reviewsModel.getPostcodes();
 
   res.render('reviews/form', {

@@ -1,4 +1,14 @@
-<h1>{{title}}</h1>
-<p>Welcome to {{title}}</p>
+<div class='title'>
+  <h1>EVO Data</h1>
+</div>
 
-<a href='/login' class='btn btn-primary'>Log in</a>
+<div class='card'>
+  <div class='card-body'>
+    <h2 class='card-title'>Reviews</h2>
+    <p class='card-text'>{{reviewsTotal}} reviews</p>
+    <div class='actions'>
+      <a href='/reviews' class='btn btn-light'>View All Reviews</a>
+      <a href='/reviews/add' class='btn btn-primary'>Add New Review</a>
+    </div>
+  </div>
+</div>

@@ -8,6 +8,7 @@ const hbs = require('hbs');
 const flash = require('connect-flash');
 const livereload = require('livereload');
 const connectLiveReload = require('connect-livereload');
+require('dotenv').config();
 
 const liveReloadServer = livereload.createServer();
 liveReloadServer.server.once('connection', () => {
