@@ -6,6 +6,6 @@ router.get('/reviews', apiController.reviews);
 router.get('/locations', apiController.locations);
 router.get('/locations/county/:id', apiController.locationsInSameCounty);
 router.get('/counties', apiController.counties);
-router.get('/services', apiController.services);
+router.get('/services/website/:id', apiController.servicesByWebsite);
 
 module.exports = router;

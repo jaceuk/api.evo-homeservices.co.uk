@@ -29,8 +29,8 @@ exports.counties = (req, res, next) => {
   res.json(counties);
 };
 
-exports.services = (req, res, next) => {
-  const services = servicesModel.getAll();
+exports.servicesByWebsite = (req, res, next) => {
+  const services = servicesModel.getByWebsite(req.params.id);
 
   res.json(services);
 };

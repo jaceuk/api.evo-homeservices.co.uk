@@ -20,7 +20,7 @@ exports.getAll = function () {
 exports.getLocationsInSameCounty = function (id) {
   const db = new Database(database);
 
-  const sql = `SELECT * FROM ${table} where county = ?`;
+  const sql = `SELECT * FROM ${table} where county = ? ORDER BY name`;
 
   try {
     const results = db.prepare(sql).all(id);
