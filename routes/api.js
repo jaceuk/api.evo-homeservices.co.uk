@@ -10,5 +10,7 @@ router.get('/services/website/:id', apiController.servicesByWebsite);
 router.get('/reviews', apiController.reviews);
 router.get('/keywords/website/:id', apiController.keywordsByWebsite);
 router.get('/keywords/service/:id', apiController.keywordsByService);
+router.post('/verify', apiController.verify);
+router.post('/send', apiController.send);
 
 module.exports = router;

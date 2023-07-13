@@ -8,6 +8,7 @@ const hbs = require('hbs');
 const flash = require('connect-flash');
 const livereload = require('livereload');
 const connectLiveReload = require('connect-livereload');
+const cors = require('cors');
 require('dotenv').config();
 
 const liveReloadServer = livereload.createServer();
@@ -23,6 +24,7 @@ const reviewsRouter = require('./routes/reviews');
 const apiRouter = require('./routes/api');
 
 const app = express();
+app.use(cors());
 app.use(connectLiveReload());
 
 const sessionStore = new session.MemoryStore();
