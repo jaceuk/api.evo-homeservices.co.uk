@@ -11,12 +11,12 @@ const connectLiveReload = require('connect-livereload');
 const cors = require('cors');
 require('dotenv').config();
 
-// const liveReloadServer = livereload.createServer();
-// liveReloadServer.server.once('connection', () => {
-//   setTimeout(() => {
-//     liveReloadServer.refresh('/');
-//   }, 100);
-// });
+const liveReloadServer = livereload.createServer();
+liveReloadServer.server.once('connection', () => {
+  setTimeout(() => {
+    liveReloadServer.refresh('/');
+  }, 100);
+});
 
 // const indexRouter = require('./routes/index');
 // const usersRouter = require('./routes/users');
@@ -25,7 +25,7 @@ require('dotenv').config();
 
 const app = express();
 app.use(cors());
-// app.use(connectLiveReload());
+app.use(connectLiveReload());
 
 app.get('/', (req, res) => {
   res.status(200).send('ok');
@@ -66,7 +66,7 @@ hbs.registerHelper('ifCond', function (v1, operator, v2, options) {
   }
 });
 
-// app.use(logger('dev'));
+app.use(logger('dev'));
 app.use(express.json());
 // app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
