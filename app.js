@@ -6,28 +6,18 @@ const session = require('express-session');
 const logger = require('morgan');
 const hbs = require('hbs');
 const flash = require('connect-flash');
-const livereload = require('livereload');
-const connectLiveReload = require('connect-livereload');
 const cors = require('cors');
 require('dotenv').config();
 
-// const liveReloadServer = livereload.createServer();
-// liveReloadServer.server.once('connection', () => {
-//   setTimeout(() => {
-//     liveReloadServer.refresh('/');
-//   }, 100);
-// });
-
-// const indexRouter = require('./routes/index');
-// const usersRouter = require('./routes/users');
-// const reviewsRouter = require('./routes/reviews');
-// const apiRouter = require('./routes/api');
+const indexRouter = require('./routes/index');
+const usersRouter = require('./routes/users');
+const reviewsRouter = require('./routes/reviews');
+const apiRouter = require('./routes/api');
 
 const app = express();
 app.use(cors());
-// app.use(connectLiveReload());
 
-app.get('/', (req, res) => {
+app.get('/_health', (req, res) => {
   res.status(200).send('ok');
 });
 
