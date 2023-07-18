@@ -3,8 +3,8 @@ const reviewsModel = require('../models/reviews.model.js');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-exports.homePage = (req, res, next) => {
-  const reviews = reviewsModel.getAll();
+exports.homePage = async (req, res, next) => {
+  const reviews = await reviewsModel.getAll();
 
   res.render('index', {
     reviewsTotal: reviews.length,

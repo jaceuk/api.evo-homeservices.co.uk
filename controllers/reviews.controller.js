@@ -1,7 +1,7 @@
 const reviewsModel = require('../models/reviews.model.js');
 
-exports.homePage = (req, res, next) => {
-  const reviews = reviewsModel.getAll();
+exports.homePage = async (req, res, next) => {
+  const reviews = await reviewsModel.getAll();
 
   res.render('reviews/list', {
     title: 'Reviews',
@@ -11,8 +11,8 @@ exports.homePage = (req, res, next) => {
   });
 };
 
-exports.addPage = (req, res, next) => {
-  const postcodes = reviewsModel.getPostcodes();
+exports.addPage = async (req, res, next) => {
+  const postcodes = await reviewsModel.getPostcodes();
 
   res.render('reviews/form', {
     title: 'Add new review ',
@@ -21,10 +21,10 @@ exports.addPage = (req, res, next) => {
   });
 };
 
-exports.add = (req, res, next) => {
-  const postcodes = reviewsModel.getPostcodes();
+exports.add = async (req, res, next) => {
+  const postcodes = await reviewsModel.getPostcodes();
 
-  const result = reviewsModel.add(
+  const result = await reviewsModel.add(
     req.body.date,
     req.body.postcode,
     req.body.title,
@@ -48,8 +48,8 @@ exports.add = (req, res, next) => {
   });
 };
 
-exports.delete = (req, res, next) => {
-  const result = reviewsModel.delete(req.params.id);
+exports.delete = async (req, res, next) => {
+  const result = await reviewsModel.delete(req.params.id);
 
   if (!result) {
     req.flash('messageType', 'danger');
@@ -63,10 +63,10 @@ exports.delete = (req, res, next) => {
   res.redirect('/reviews');
 };
 
-exports.edit = (req, res, next) => {
-  const postcodes = reviewsModel.getPostcodes();
+exports.edit = async (req, res, next) => {
+  const postcodes = await reviewsModel.getPostcodes();
 
-  const result = reviewsModel.get(req.params.id);
+  const result = await reviewsModel.get(req.params.id);
 
   res.render('reviews/form', {
     title: 'Edit review ',
@@ -76,10 +76,10 @@ exports.edit = (req, res, next) => {
   });
 };
 
-exports.update = (req, res, next) => {
-  const postcodes = reviewsModel.getPostcodes();
+exports.update = async (req, res, next) => {
+  const postcodes = await reviewsModel.getPostcodes();
 
-  const result = reviewsModel.update(
+  const result = await reviewsModel.update(
     req.body.date,
     req.body.postcode,
     req.body.title,

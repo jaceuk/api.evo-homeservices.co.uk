@@ -1,30 +1,22 @@
-const Database = require('better-sqlite3');
-
-const database = './db/evo.db';
+const db = require('../db/db-connection');
 const table = 'locations';
 
-exports.getAll = function () {
-  const db = new Database(database);
-
+exports.getAll = async function () {
   const sql = `SELECT * FROM ${table}`;
 
   try {
-    const results = db.prepare(sql).all();
-    db.close();
+    const results = await db.query(sql);
     return results;
   } catch (error) {
     throw error;
   }
 };
 
-exports.getLocationsInSameCounty = function (id) {
-  const db = new Database(database);
-
+exports.getLocationsInSameCounty = async function (id) {
   const sql = `SELECT * FROM ${table} where county = ? ORDER BY name`;
 
   try {
-    const results = db.prepare(sql).all(id);
-    db.close();
+    const results = await db.query(sql, [id]);
     return results;
   } catch (error) {
     throw error;

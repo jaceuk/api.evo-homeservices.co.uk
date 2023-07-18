@@ -1,87 +1,67 @@
-const Database = require('better-sqlite3');
-
-const database = './db/evo.db';
+const db = require('../db/db-connection');
 const table = 'reviews';
 
-exports.getAll = function () {
-  const db = new Database(database);
-
+exports.getAll = async function () {
   const sql = `SELECT * FROM ${table} ORDER BY date DESC`;
 
   try {
-    const results = db.prepare(sql).all();
-    db.close();
+    const results = await db.query(sql);
     return results;
   } catch (error) {
     throw error;
   }
 };
 
-exports.getPostcodes = function () {
-  const db = new Database(database);
-
+exports.getPostcodes = async function () {
   const sql = `SELECT DISTINCT postcode FROM locations ORDER BY postcode`;
 
   try {
-    const results = db.prepare(sql).all();
-    db.close();
+    const results = await db.query(sql);
     return results;
   } catch (error) {
     throw error;
   }
 };
 
-exports.add = function (date, postcode, title, text) {
-  const db = new Database(database);
-
+exports.add = async function (date, postcode, title, text) {
   const sql = `INSERT INTO ${table} (date, postcode, title, text) VALUES (?, ?, ?, ?)`;
 
   try {
-    const results = db.prepare(sql).run(date, postcode, title, text);
-    db.close();
-    return results;
+    const result = await db.query(sql, [date, postcode, title, text]);
+    return result;
   } catch (error) {
     throw error;
   }
 };
 
-exports.delete = function (id) {
-  const db = new Database(database);
-
+exports.delete = async function (id) {
   const sql = `DELETE FROM ${table} WHERE id = ?`;
 
   try {
-    const results = db.prepare(sql).run(id);
-    db.close();
-    return results;
+    const result = await db.query(sql, [id]);
+    return result;
   } catch (error) {
     throw error;
   }
 };
 
-exports.get = function (id) {
-  const db = new Database(database);
-
+exports.get = async function (id) {
   const sql = `SELECT * FROM ${table} WHERE id = ?`;
 
   try {
-    const results = db.prepare(sql).get(id);
-    db.close();
-    return results;
+    const result = await db.query(sql, [id]);
+    return result[0];
   } catch (error) {
     throw error;
   }
 };
 
-exports.update = function (date, postcode, title, text, id) {
-  const db = new Database(database);
-
+exports.update = async function (date, postcode, title, text, id) {
   const sql = `UPDATE  ${table} SET date = ?, postcode = ?, title = ?, text = ? WHERE id = ?`;
 
   try {
-    const results = db.prepare(sql).run(date, postcode, title, text, id);
-    db.close();
-    return results;
+    const result = await db.query(sql, [date, postcode, title, text, id]);
+    return result;
   } catch (error) {
     throw error;
   }

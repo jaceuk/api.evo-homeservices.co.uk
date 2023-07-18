@@ -1,16 +1,11 @@
-const Database = require('better-sqlite3');
-
-const database = './db/evo.db';
+const db = require('../db/db-connection');
 const table = 'checkatrade';
 
-exports.getAll = function () {
-  const db = new Database(database);
-
+exports.getAll = async function () {
   const sql = `SELECT * FROM ${table}`;
 
   try {
-    const results = db.prepare(sql).all();
-    db.close();
+    const results = await db.query(sql);
     return results;
   } catch (error) {
     throw error;
