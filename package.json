@@ -2,7 +2,6 @@
   "name": "api.evo-homeservices.co.uk",
   "version": "1.0.0",
   "private": true,
-  "type": "module",
   "scripts": {
     "start": "node ./bin/www",
     "dev": "nodemon -e js,hbs,css ./bin/www"

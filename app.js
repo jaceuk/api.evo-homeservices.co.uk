@@ -18,14 +18,18 @@ liveReloadServer.server.once('connection', () => {
   }, 100);
 });
 
-const indexRouter = require('./routes/index');
-const usersRouter = require('./routes/users');
-const reviewsRouter = require('./routes/reviews');
-const apiRouter = require('./routes/api');
+// const indexRouter = require('./routes/index');
+// const usersRouter = require('./routes/users');
+// const reviewsRouter = require('./routes/reviews');
+// const apiRouter = require('./routes/api');
 
 const app = express();
 app.use(cors());
 app.use(connectLiveReload());
+
+app.get('/', (req, res) => {
+  res.status(200).send('ok');
+});
 
 const sessionStore = new session.MemoryStore();
 
@@ -78,17 +82,8 @@ app.use(
   })
 );
 
-if (app.get('env') === 'production') {
-  app.set('trust proxy', 1); // trust first proxy
-}
-
 // Flash messaging
 app.use(flash());
-
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
-app.use('/reviews', reviewsRouter);
-app.use('/api', apiRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
