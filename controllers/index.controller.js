@@ -22,6 +22,13 @@ exports.loginPage = (req, res, next) => {
 
 exports.login = async (req, res, next) => {
   let isMatch;
+
+  // if honeypot field has been filled in it's a bot and we should simply return
+  if (req.body.check) {
+    res.redirect('/login');
+    return;
+  }
+
   const user = await usersModel.getUser(req.body.email);
 
   if (user) isMatch = await bcrypt.compare(req.body.password, user.password);

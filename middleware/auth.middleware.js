@@ -3,13 +3,13 @@ require('dotenv').config();
 
 exports.auth = (req, res, next) => {
   // turn off auth on development
-  if (process.env.NODE_ENV === 'development') {
-    req.session.admin = 1;
-    req.session.userId = 1;
-    req.session.username = 'Test Admin';
-    next();
-    return;
-  }
+  // if (process.env.NODE_ENV === 'development') {
+  //   req.session.admin = 1;
+  //   req.session.userId = 1;
+  //   req.session.username = 'Test Admin';
+  //   next();
+  //   return;
+  // }
 
   try {
     let accessToken = req.session.accessToken;

@@ -54,3 +54,7 @@ form {
   color: red;
   font-size: 12px;
 }
+
+.check-field {
+  display: none;
+}
