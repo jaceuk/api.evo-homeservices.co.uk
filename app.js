@@ -25,7 +25,7 @@ liveReloadServer.server.once('connection', () => {
 
 const app = express();
 app.use(cors());
-app.use(connectLiveReload());
+// app.use(connectLiveReload());
 
 app.get('/', (req, res) => {
   res.status(200).send('ok');
@@ -68,7 +68,7 @@ hbs.registerHelper('ifCond', function (v1, operator, v2, options) {
 
 app.use(logger('dev'));
 app.use(express.json());
-// app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(
