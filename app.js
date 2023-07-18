@@ -77,6 +77,11 @@ app.use(
     secret: 'secret',
   })
 );
+
+if (app.get('env') === 'production') {
+  app.set('trust proxy', 1); // trust first proxy
+}
+
 // Flash messaging
 app.use(flash());
 
