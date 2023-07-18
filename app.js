@@ -11,12 +11,12 @@ const connectLiveReload = require('connect-livereload');
 const cors = require('cors');
 require('dotenv').config();
 
-const liveReloadServer = livereload.createServer();
-liveReloadServer.server.once('connection', () => {
-  setTimeout(() => {
-    liveReloadServer.refresh('/');
-  }, 100);
-});
+// const liveReloadServer = livereload.createServer();
+// liveReloadServer.server.once('connection', () => {
+//   setTimeout(() => {
+//     liveReloadServer.refresh('/');
+//   }, 100);
+// });
 
 // const indexRouter = require('./routes/index');
 // const usersRouter = require('./routes/users');
