@@ -5,7 +5,7 @@ exports.getByWebsite = function (id) {
   const sql = `SELECT * FROM ${table} WHERE website = ? OR website = ?`;
 
   try {
-    const results = db.prepare(sql).all(id, 'both');
+    const results = db.query(sql, [id, 'both']);
     return results;
   } catch (error) {
     throw error;
