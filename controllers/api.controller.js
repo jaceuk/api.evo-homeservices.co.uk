@@ -23,52 +23,52 @@ transporter.verify((err, success) => {
     : console.log(`=== Server is ready to take messages: ${success} ===`);
 });
 
-exports.checkatrade = (req, res, next) => {
-  const checkatrade = checkatradeModel.getAll();
+exports.checkatrade = async (req, res, next) => {
+  const checkatrade = await checkatradeModel.getAll();
 
   res.json(checkatrade);
 };
 
-exports.reviews = (req, res, next) => {
-  const reviews = reviewsModel.getAll();
+exports.reviews = async (req, res, next) => {
+  const reviews = await reviewsModel.getAll();
 
   res.json(reviews);
 };
 
-exports.locations = (req, res, next) => {
-  const locations = locationsModel.getAll();
+exports.locations = async (req, res, next) => {
+  const locations = await locationsModel.getAll();
 
   res.json(locations);
 };
 
-exports.locationsInSameCounty = (req, res, next) => {
-  const locationsInSameCounty = locationsModel.getLocationsInSameCounty(
+exports.locationsInSameCounty = async (req, res, next) => {
+  const locationsInSameCounty = await locationsModel.getLocationsInSameCounty(
     req.params.id
   );
 
   res.json(locationsInSameCounty);
 };
 
-exports.counties = (req, res, next) => {
-  const counties = countiesModel.getAll();
+exports.counties = async (req, res, next) => {
+  const counties = await countiesModel.getAll();
 
   res.json(counties);
 };
 
-exports.servicesByWebsite = (req, res, next) => {
-  const services = servicesModel.getByWebsite(req.params.id);
+exports.servicesByWebsite = async (req, res, next) => {
+  const services = await servicesModel.getByWebsite(req.params.id);
 
   res.json(services);
 };
 
-exports.keywordsByWebsite = (req, res, next) => {
-  const keyword = keywordsModel.getByWebsite(req.params.id);
+exports.keywordsByWebsite = async (req, res, next) => {
+  const keyword = await keywordsModel.getByWebsite(req.params.id);
 
   res.json(keyword);
 };
 
-exports.keywordsByService = (req, res, next) => {
-  const keyword = keywordsModel.getByService(req.params.id);
+exports.keywordsByService = async (req, res, next) => {
+  const keyword = await keywordsModel.getByService(req.params.id);
 
   res.json(keyword);
 };
