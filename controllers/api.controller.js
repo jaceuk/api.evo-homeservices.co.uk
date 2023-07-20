@@ -55,6 +55,12 @@ exports.counties = async (req, res, next) => {
   res.json(counties);
 };
 
+exports.county = async (req, res, next) => {
+  const counties = await countiesModel.getById(req.params.id);
+
+  res.json(counties);
+};
+
 exports.servicesByWebsite = async (req, res, next) => {
   const services = await servicesModel.getByWebsite(req.params.id);
 
