@@ -79,6 +79,15 @@ exports.keywordsByService = async (req, res, next) => {
   res.json(keyword);
 };
 
+exports.templateByServiceAndLocation = async (req, res, next) => {
+  const keyword = await locationsModel.getTemplateByServiceAndLocation(
+    req.params.serviceId,
+    req.params.locationId
+  );
+
+  res.json(keyword);
+};
+
 exports.verify = async (req, res, next) => {
   const captchaURL = 'https://www.google.com/recaptcha/api/siteverify';
   // Get the token from the form

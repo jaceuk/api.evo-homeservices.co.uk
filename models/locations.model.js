@@ -22,3 +22,17 @@ exports.getLocationsInSameCounty = async function (id) {
     throw error;
   }
 };
+
+exports.getTemplateByServiceAndLocation = async function (
+  serviceId,
+  locationId
+) {
+  const sql = `SELECT template FROM templates where service = ? AND location = ?`;
+
+  try {
+    const result = await db.query(sql, [serviceId, locationId]);
+    return result[0];
+  } catch (error) {
+    throw error;
+  }
+};
