@@ -127,7 +127,7 @@ exports.verify = async (req, res, next) => {
 exports.send = (req, res, next) => {
   const { email, tel, message, site, page } = req.body;
 
-  if (!email || !tel || message || site || page) res.json({ status: 500 });
+  if (!email || !tel || !message || !site || !page) res.json({ status: 500 });
 
   const mailOptions = {
     from: 'noreply@evo-homeservices.co.uk',
