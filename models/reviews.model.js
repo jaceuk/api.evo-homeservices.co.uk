@@ -66,3 +66,14 @@ exports.update = async function (date, postcode, title, text, id) {
     throw error;
   }
 };
+
+exports.alreadyExists = async function (title, text) {
+  const sql = `SELECT * FROM ${table} WHERE title = ? AND text = ?`;
+
+  try {
+    const result = await db.query(sql, [title, text]);
+    return result[0];
+  } catch (error) {
+    throw error;
+  }
+};
