@@ -1,4 +1,4 @@
-// const schedule = require('node-schedule');
+const schedule = require('node-schedule');
 const scraper = require('./latestReviews.scraper.js');
 const sendEmail = require('./sendEmail.js');
 
@@ -11,7 +11,7 @@ const CHECKATRADE_ACCOUNTS = [
 ];
 
 // * minute * hour * day of month * month * day of week
-const TIME = '00 01 * * *';
+const TIME = '0 1 1 * *';
 
 // send email after successful import
 async function sendImportReport(checkatradeAccount, result) {
@@ -45,10 +45,12 @@ async function sendError(checkatradeAccount, error) {
     throw 'There was a problem sending your enquiry, please try again.';
 }
 
-// get latest reviews for each checkatrade account
-CHECKATRADE_ACCOUNTS.forEach(async (checkatradeAccount) => {
-  const result = await scraper.scrape(checkatradeAccount).catch((error) => {
-    sendError(checkatradeAccount, error);
+schedule.scheduleJob(TIME, async function () {
+  // get latest reviews for each checkatrade account
+  CHECKATRADE_ACCOUNTS.forEach(async (checkatradeAccount) => {
+    const result = await scraper.scrape(checkatradeAccount).catch((error) => {
+      sendError(checkatradeAccount, error);
+    });
+    sendImportReport(checkatradeAccount, result);
   });
-  sendImportReport(checkatradeAccount, result);
 });
