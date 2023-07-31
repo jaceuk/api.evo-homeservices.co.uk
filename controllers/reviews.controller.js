@@ -97,6 +97,24 @@ exports.edit = async (req, res, next) => {
 exports.update = async (req, res, next) => {
   const postcodes = await reviewsModel.getPostcodes();
 
+  // if review already exists then don't allow it, we don't want duplicates
+  const alreadyExists = await reviewsModel.alreadyExists(
+    req.body.title,
+    req.body.text
+  );
+
+  if (alreadyExists) {
+    res.render('reviews/form', {
+      title: 'Edit review ',
+      postcodes: postcodes,
+      formAction: '/reviews/update',
+      review: req.body,
+      messageType: 'danger',
+      message: 'There is already a review with the same Title and Text.',
+    });
+    return;
+  }
+
   const result = await reviewsModel.update(
     req.body.date,
     req.body.postcode,
