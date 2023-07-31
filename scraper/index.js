@@ -1,34 +1,26 @@
-const schedule = require('node-schedule');
+// const schedule = require('node-schedule');
 const scraper = require('./latestReviews.scraper.js');
 const sendEmail = require('./sendEmail.js');
 
 const EMAIL_FROM = 'noreply@evo-homeservices.co.uk';
 const EMAIL_TO = 'jnewington@gmail.com';
-const CHECKATRADE_ACCOUNT_1 = 'evoplumbingheatinganddrainage';
-const CHECKATRADE_ACCOUNT_2 = 'evoplumbingheatinganddrainageburgesshill';
-const CHECKATRADE_ACCOUNT_3 = 'evoplumbingheatinganddrainage241077';
+const CHECKATRADE_ACCOUNTS = [
+  'evoplumbingheatinganddrainage',
+  'evoplumbingheatinganddrainageburgesshill',
+  'evoplumbingheatinganddrainage241077',
+];
 
 // * minute * hour * day of month * month * day of week
-const CHECKATRADE_ACCOUNT_1_TIME = '00 01 * * *';
+const TIME = '00 01 * * *';
 
-if (CHECKATRADE_ACCOUNT_1_TIME) {
-  schedule.scheduleJob(CHECKATRADE_ACCOUNT_1_TIME, async function () {
-    const result = await scraper
-      .scrape(CHECKATRADE_ACCOUNT_1)
-      .catch((error) => {
-        sendError(CHECKATRADE_ACCOUNT_1, error);
-      });
-    sendImportReport(CHECKATRADE_ACCOUNT_1, result);
-  });
-}
-
+// send email after successful import
 async function sendImportReport(checkatradeAccount, result) {
   const from = EMAIL_FROM;
   const to = EMAIL_TO;
   const replyTo = EMAIL_FROM;
   const bcc = '';
   const subject = 'Monthly import - ' + checkatradeAccount;
-  const html = `<p><strong>New reviews added from https://www.checkatrade.com/trades/${checkatradeAccount}: </strong>${result.reviewsAdded}</p>`;
+  const html = `<p><strong>${result.reviewsAdded}</strong> new reviews added from https://www.checkatrade.com/trades/${checkatradeAccount}</p>`;
 
   // send email
   const emailSent = await sendEmail(from, to, subject, html, replyTo, bcc);
@@ -37,6 +29,7 @@ async function sendImportReport(checkatradeAccount, result) {
     throw 'There was a problem sending your enquiry, please try again.';
 }
 
+// send email if there was an import error
 async function sendError(checkatradeAccount, error) {
   const from = EMAIL_FROM;
   const to = EMAIL_TO;
@@ -51,3 +44,11 @@ async function sendError(checkatradeAccount, error) {
   if (!emailSent || emailSent.rejected != '')
     throw 'There was a problem sending your enquiry, please try again.';
 }
+
+// get latest reviews for each checkatrade account
+CHECKATRADE_ACCOUNTS.forEach(async (checkatradeAccount) => {
+  const result = await scraper.scrape(checkatradeAccount).catch((error) => {
+    sendError(checkatradeAccount, error);
+  });
+  sendImportReport(checkatradeAccount, result);
+});

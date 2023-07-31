@@ -4,16 +4,10 @@ const reviews = require('./utils/reviews.js');
 const utils = require('./utils/utils.js');
 const reviewsModel = require('../models/reviews.model.js');
 
-// checkatrade accounts
-// evoplumbingheatinganddrainage
-// evoplumbingheatinganddrainageburgesshill
-// evoplumbingheatinganddrainage241077
-
 const SCRAPE_DELAY = 1000; // 1 sec
-const CHECKATRADE_ACCOUNT = 'evoplumbingheatinganddrainage241077';
 const SCORE_THRESHOLD = 9;
 
-(async () => {
+exports.scrape = async (checkatradeAccount) => {
   let output = {
     reviewsAdded: 0,
   };
@@ -40,7 +34,7 @@ const SCORE_THRESHOLD = 9;
 
     // get the results page
     await page.goto(
-      `https://www.checkatrade.com/trades/${CHECKATRADE_ACCOUNT}/reviews?page=${i}`
+      `https://www.checkatrade.com/trades/${checkatradeAccount}/reviews?page=${i}`
     );
 
     // get the reviews from the results page
@@ -79,6 +73,5 @@ const SCORE_THRESHOLD = 9;
 
   console.log(`Reviews added: ${output.reviewsAdded}`);
 
-  process.exit();
   return output;
-})();
+};
