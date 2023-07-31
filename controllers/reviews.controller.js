@@ -24,6 +24,24 @@ exports.addPage = async (req, res, next) => {
 exports.add = async (req, res, next) => {
   const postcodes = await reviewsModel.getPostcodes();
 
+  // if review already exists then don't allow it, we don't want duplicates
+  const alreadyExists = await reviewsModel.alreadyExists(
+    req.body.title,
+    req.body.text
+  );
+
+  if (alreadyExists) {
+    res.render('reviews/form', {
+      title: 'Add new review ',
+      postcodes: postcodes,
+      formAction: '/reviews/add',
+      review: req.body,
+      messageType: 'danger',
+      message: 'There is already a review with the same Title and Text.',
+    });
+    return;
+  }
+
   const result = await reviewsModel.add(
     req.body.date,
     req.body.postcode,
