@@ -1,82 +1,84 @@
 const fs = require('fs-extra');
 const puppeteer = require('puppeteer');
-const utils = require('./utils.js');
+const reviews = require('./utils/reviews.js');
+const utils = require('./utils/utils.js');
 const reviewsModel = require('../models/reviews.model.js');
-const reviews = require('./evoplumbingheatinganddrainage241077-reviews.json');
 
 // checkatrade accounts
 // evoplumbingheatinganddrainage
 // evoplumbingheatinganddrainageburgesshill
 // evoplumbingheatinganddrainage241077
 
-const RESULTS_PER_PAGE = 10;
-const CLOUDFLARE_DELAY = 10000;
 const SCRAPE_DELAY = 1000; // 1 sec
-const CHECKATRADE_ACCOUNT = 'evoplumbingheatinganddrainage';
+const CHECKATRADE_ACCOUNT = 'evoplumbingheatinganddrainage241077';
 const SCORE_THRESHOLD = 9;
 
 (async () => {
+  let output = {
+    reviewsAdded: 0,
+  };
+
+  // we only need to grab reviews from the past month
+  // to be on the safe side the cut-off date will be the past two months
+  const currentDate = new Date();
+  let cutOffDate = currentDate.setDate(currentDate.getDate() - 42);
+  cutOffDate = utils.formatDate(cutOffDate);
+
   // Launch the browser
   const browser = await puppeteer.launch({ headless: 'new' });
 
   // Create a page
   const page = await browser.newPage();
 
-  // Go to the site
-  await page.goto(
-    `https://www.checkatrade.com/trades/${CHECKATRADE_ACCOUNT}/reviews?page=1`
-  );
+  let stopImport = false;
+  // setup to go through the first 5 pages (50 reviews)
+  // realistically the latest reviews will be in the first few pages so we won't scrape all 10
+  for (let i = 1; i <= 5; i++) {
+    // skip if we've found a duplicate
+    if (stopImport) break;
+    console.log(`Grabbing results for page ${i}`);
 
-  // get number of reviews
-  const totalReviews = await utils.getTotalReviews(page);
-  const totalPages = Math.floor(totalReviews / RESULTS_PER_PAGE);
+    // get the results page
+    await page.goto(
+      `https://www.checkatrade.com/trades/${CHECKATRADE_ACCOUNT}/reviews?page=${i}`
+    );
 
-  console.log(totalPages);
+    // get the reviews from the results page
+    const nextTenReviews = await reviews.getReviews(page, SCORE_THRESHOLD);
 
-  // get reviews
-  let reviews = [];
+    // go through reach review
+    nextTenReviews.forEach(async (review) => {
+      // we're only interested in reviews within the cutoff period
+      if (review.date < cutOffDate) return (stopImport = true);
 
-  // for (let i = 1; i <= totalPages; i++) {
-  //   // delay between each page fetch
-  //   await utils.delay(SCRAPE_DELAY);
-  //   await page.goto(
-  //     `https://www.checkatrade.com/trades/${CHECKATRADE_ACCOUNT}/reviews?page=${i}`
-  //   );
-  //   const nextTenReviews = await utils.getReviews(page, SCORE_THRESHOLD);
-  //   reviews.push(...nextTenReviews);
-  // }
+      // check if the review is already in the database
+      const alreadyExists = await reviewsModel.alreadyExists(
+        review.title,
+        review.text
+      );
 
-  // // Close browser.
-  // await browser.close();
+      // if the review isn't already in the database then add it
+      if (!alreadyExists) {
+        await reviewsModel.add(
+          review.date,
+          review.postcode,
+          review.title,
+          review.text
+        );
+        // increase the count for reviews that have been added to the database
+        output.reviewsAdded++;
+      }
 
-  // // save reviews to file
-  // const contents = JSON.stringify(reviews);
-  // const path = `./${CHECKATRADE_ACCOUNT}-reviews.json`;
-  // fs.writeFile(path, contents, function (err) {
-  //   if (err) return console.log(err);
-  // });
+      // pause between scrapes
+      await utils.delay(SCRAPE_DELAY);
+    });
+  }
 
-  // // add each review to the database
-  // let duplicates = 0;
+  // Close browser.
+  await browser.close();
 
-  // for (const review of reviews) {
-  //   // if review already exists then skip, we don't want duplicates
-  //   const alreadyExists = await reviewsModel.alreadyExists(
-  //     review.title,
-  //     review.text
-  //   );
-
-  //   if (alreadyExists) {
-  //     duplicates++;
-  //   } else {
-  //     await reviewsModel.add(
-  //       review.date,
-  //       review.postcode,
-  //       review.title,
-  //       review.text
-  //     );
-  //   }
-  // }
+  console.log(`Reviews added: ${output.reviewsAdded}`);
 
   process.exit();
+  return output;
 })();

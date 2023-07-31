@@ -1,13 +1,4 @@
-exports.delay = (interval) =>
-  new Promise((resolve) => setTimeout(resolve, interval));
-
-function formatDate(oldDate) {
-  const t = new Date(oldDate);
-  const date = ('0' + t.getDate()).slice(-2);
-  const month = ('0' + (t.getMonth() + 1)).slice(-2);
-  const year = t.getFullYear();
-  return `${year}-${month}-${date}`;
-}
+const utils = require('./utils.js');
 
 function formatPostcode(oldPostcode) {
   let postcode = oldPostcode;
@@ -20,7 +11,13 @@ function cleanContent(string) {
 
   string = string.replace('\n', ' ');
   string = string.replace(/\u00A0/g, ' ');
-  string = string.replace('  ', ' ');
+  string = string.replace(/\s\s+/g, ' ');
+
+  const firstChar = string.charAt(0);
+  if (firstChar === '"') string = string.slice(1);
+
+  const lastChar = string.charAt(string.length - 1);
+  if (lastChar === '"') string = string.slice(0, string.length - 1);
 
   return string;
 }
@@ -84,13 +81,25 @@ exports.getReviews = async (page, scoreThreshold) => {
   // build array of reviews
   let reviews = [];
   for (let i = 0; i < titles.length; i++) {
+    const formattedPostcode = formatPostcode(postcodes[i]);
+    const formattedText = cleanContent(text[i]);
+    const formattedTitle = cleanContent(titles[i]);
+    const formattedDate = utils.formatDate(dates[i]);
+
     const review = {
-      title: cleanContent(titles[i]),
-      text: cleanContent(text[i]),
-      postcode: formatPostcode(postcodes[i]),
-      date: formatDate(dates[i]),
+      title: formattedTitle,
+      text: formattedText,
+      postcode: formattedPostcode,
+      date: formattedDate,
     };
-    if (scores[i] >= scoreThreshold && text && postcode) reviews.push(review); // only include reviews above 9 and that have text and a postcode
+    if (
+      scores[i] >= scoreThreshold &&
+      formattedText &&
+      formattedPostcode &&
+      formattedTitle &&
+      formattedDate
+    )
+      reviews.push(review); // only include reviews above 9 and no empty fields
   }
 
   return reviews;
