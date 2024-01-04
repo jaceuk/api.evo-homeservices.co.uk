@@ -12,7 +12,9 @@ const CHECKATRADE_ACCOUNTS = [
 
 // * minute * hour * day of month * month * day of week
 // const TIME = '0 1 * * 1';
-const TIME = '10 14 * * *';
+const TIME_1 = '40 14 * * *';
+const TIME_2 = '45 14 * * *';
+const TIME_3 = '50 14 * * *';
 
 // send email after successful import
 async function sendImportReport(checkatradeAccount, result) {
@@ -46,12 +48,39 @@ async function sendError(checkatradeAccount, error) {
     throw 'There was a problem sending your enquiry, please try again.';
 }
 
-schedule.scheduleJob(TIME, async function () {
-  // get latest reviews for each checkatrade account
-  CHECKATRADE_ACCOUNTS.forEach(async (checkatradeAccount) => {
-    const result = await scraper.scrape(checkatradeAccount).catch((error) => {
-      sendError(checkatradeAccount, error);
+// schedule.scheduleJob(TIME, async function () {
+//   // get latest reviews for each checkatrade account
+//   CHECKATRADE_ACCOUNTS.forEach(async (checkatradeAccount) => {
+//     const result = await scraper.scrape(checkatradeAccount).catch((error) => {
+//       sendError(checkatradeAccount, error);
+//     });
+//     sendImportReport(checkatradeAccount, result);
+//   });
+// });
+
+schedule.scheduleJob(TIME_1, async function () {
+  const result = await scraper
+    .scrape(CHECKATRADE_ACCOUNTS[0])
+    .catch((error) => {
+      sendError(CHECKATRADE_ACCOUNTS[0], error);
     });
-    sendImportReport(checkatradeAccount, result);
-  });
+  sendImportReport(CHECKATRADE_ACCOUNTS[0], result);
+});
+
+schedule.scheduleJob(TIME_2, async function () {
+  const result = await scraper
+    .scrape(CHECKATRADE_ACCOUNTS[1])
+    .catch((error) => {
+      sendError(CHECKATRADE_ACCOUNTS[1], error);
+    });
+  sendImportReport(CHECKATRADE_ACCOUNTS[1], result);
+});
+
+schedule.scheduleJob(TIME_3, async function () {
+  const result = await scraper
+    .scrape(CHECKATRADE_ACCOUNTS[2])
+    .catch((error) => {
+      sendError(CHECKATRADE_ACCOUNTS[2], error);
+    });
+  sendImportReport(CHECKATRADE_ACCOUNTS[2], result);
 });
