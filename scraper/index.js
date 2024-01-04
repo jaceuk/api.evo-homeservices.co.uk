@@ -12,7 +12,7 @@ const CHECKATRADE_ACCOUNTS = [
 
 // * minute * hour * day of month * month * day of week
 // const TIME = '0 1 * * 1';
-const TIME = '20 13 * * *';
+const TIME = '40 13 * * *';
 
 // send email after successful import
 async function sendImportReport(checkatradeAccount, result) {
@@ -20,7 +20,7 @@ async function sendImportReport(checkatradeAccount, result) {
   const to = EMAIL_TO;
   const replyTo = EMAIL_FROM;
   const bcc = '';
-  const subject = 'Monthly import - ' + checkatradeAccount;
+  const subject = 'Overnight import - ' + checkatradeAccount;
   const html = `<p><strong>${result.reviewsAdded}</strong> new reviews added from https://www.checkatrade.com/trades/${checkatradeAccount}</p>`;
 
   // send email

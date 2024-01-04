@@ -74,5 +74,6 @@ exports.scrape = async (checkatradeAccount) => {
 
   console.log(`Reviews added: ${output.reviewsAdded}`);
 
+  await utils.delay(CLICK_DELAY);
   return output;
 };
