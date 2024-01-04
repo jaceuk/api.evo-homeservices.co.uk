@@ -1,9 +1,7 @@
 const utils = require('./utils.js');
 
 function formatPostcode(oldPostcode) {
-  let postcode = oldPostcode;
-  if (oldPostcode && oldPostcode.length > 4) postcode = null;
-  return postcode;
+  return oldPostcode.replace('Location: ', '');
 }
 
 function cleanContent(string) {
@@ -22,64 +20,44 @@ function cleanContent(string) {
   return string;
 }
 
-exports.getTotalReviews = async (page) => {
-  let totalReviews;
-  const element = await page.waitForSelector('h3');
-  const customerReviewsText = await page.evaluate(
-    (el) => el.textContent,
-    element
-  );
-  totalReviews = parseInt(
-    customerReviewsText.replace('Customer Reviews (', '').replace(')', '')
-  );
-  await element.dispose();
-
-  return totalReviews;
-};
-
 exports.getReviews = async (page, scoreThreshold) => {
-  // Go through each page and grab the reviews cards (data-guid="ReviewsCard")
-  // get the title (data-guid="ReviewsCard" h3)
-  // get the postcode (data-guid="ReviewsCard" div.sc-248f0f6-9 div:first-child span)
-  // get the text (data-guid="ReviewsCard" p)
-  // get the date (data-guid="ReviewsCard" div.sc-248f0f6-9 div:last-child span)
+  // Go through each page and grab the reviews
   const titles = await page.evaluate(() =>
     Array.from(
-      document.querySelectorAll('[data-guid="ReviewsCard"] h3'),
+      document.querySelectorAll('ul[aria-label="Reviews"] li h4'),
       (element) => element.textContent
     )
   );
   const text = await page.evaluate(() =>
     Array.from(
-      document.querySelectorAll('[data-guid="ReviewsCard"] p'),
+      document.querySelectorAll('ul[aria-label="Reviews"] li p'),
       (element) => element.textContent
     )
   );
   const postcodes = await page.evaluate(() =>
     Array.from(
-      document.querySelectorAll(
-        '[data-guid="ReviewsCard"] div.sc-248f0f6-9 div:first-child span'
-      ),
+      document.querySelectorAll('ul[aria-label="Reviews"] li address'),
       (element) => element.textContent
     )
   );
   const dates = await page.evaluate(() =>
     Array.from(
-      document.querySelectorAll(
-        '[data-guid="ReviewsCard"] div.sc-248f0f6-9 div:last-child span'
-      ),
+      document.querySelectorAll('ul[aria-label="Reviews"] li time'),
       (element) => element.textContent
     )
   );
   const scores = await page.evaluate(() =>
     Array.from(
-      document.querySelectorAll('svg text'),
+      document.querySelectorAll(
+        'ul[aria-label="Reviews"] li span[aria-label^="Review score"]'
+      ),
       (element) => element.textContent
     )
   );
 
   // build array of reviews
   let reviews = [];
+
   for (let i = 0; i < titles.length; i++) {
     const formattedPostcode = formatPostcode(postcodes[i]);
     const formattedText = cleanContent(text[i]);
@@ -92,6 +70,7 @@ exports.getReviews = async (page, scoreThreshold) => {
       postcode: formattedPostcode,
       date: formattedDate,
     };
+
     if (
       scores[i] >= scoreThreshold &&
       formattedText &&
