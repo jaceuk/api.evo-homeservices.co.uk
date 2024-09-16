@@ -12,9 +12,9 @@ const CHECKATRADE_ACCOUNTS = [
 
 // * minute * hour * day of month * month * day of week
 // const TIME = '0 1 * * 1';
-const TIME_1 = '10 2 * * 1';
-const TIME_2 = '20 2 * * 1';
-const TIME_3 = '30 2 * * 1';
+const TIME_1 = '10 14 * * 1';
+const TIME_2 = '20 14 * * 1';
+const TIME_3 = '30 14 * * 1';
 
 // send email after successful import
 async function sendImportReport(checkatradeAccount, result) {
