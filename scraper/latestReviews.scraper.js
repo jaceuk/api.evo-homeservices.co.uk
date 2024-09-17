@@ -1,15 +1,15 @@
 // NOTE: if there is a problem running puppeteer with locating Chromium
 // run 'node node_modules/puppeteer/install.js' to force the installation
 
-const puppeteer = require('puppeteer');
-const reviews = require('./utils/reviews.js');
-const utils = require('./utils/utils.js');
-const reviewsModel = require('../models/reviews.model.js');
+import puppeteer from 'puppeteer';
+import { getReviews } from './utils/reviews.js';
+import { formatDate, delay } from './utils/utils.js';
+import { alreadyExists, add } from '../models/reviews.model.js';
 
 const CLICK_DELAY = 4000; // 4 secs
 const SCORE_THRESHOLD = 9;
 
-exports.scrape = async (checkatradeAccount) => {
+export const scrape = async (checkatradeAccount) => {
   console.log(checkatradeAccount + 'scrape started ...');
 
   let output = {
@@ -20,7 +20,7 @@ exports.scrape = async (checkatradeAccount) => {
   // to be on the safe side the cut-off date will be the past two months
   const currentDate = new Date();
   let cutOffDate = currentDate.setDate(currentDate.getDate() - 42);
-  cutOffDate = utils.formatDate(cutOffDate);
+  cutOffDate = formatDate(cutOffDate);
 
   // Launch the browser
   const browser = await puppeteer.launch({ headless: 'new' });
@@ -38,13 +38,13 @@ exports.scrape = async (checkatradeAccount) => {
   // this will return the 20 most recent reviews
   if (seeMoreButton) {
     await seeMoreButton.click();
-    await utils.delay(CLICK_DELAY);
+    await delay(CLICK_DELAY);
     await seeMoreButton.click();
-    await utils.delay(CLICK_DELAY);
+    await delay(CLICK_DELAY);
   }
 
   // get the reviews from the page
-  const allReviews = await reviews.getReviews(page, SCORE_THRESHOLD);
+  const allReviews = await getReviews(page, SCORE_THRESHOLD);
 
   // go through reach review
   allReviews.forEach(async (review) => {
@@ -52,19 +52,11 @@ exports.scrape = async (checkatradeAccount) => {
     if (review.date < cutOffDate) return;
 
     // check if the review is already in the database
-    const alreadyExists = await reviewsModel.alreadyExists(
-      review.title,
-      review.text
-    );
+    const reviewAlreadyExists = await alreadyExists(review.title, review.text);
 
     // if the review isn't already in the database then add it
-    if (!alreadyExists) {
-      await reviewsModel.add(
-        review.date,
-        review.postcode,
-        review.title,
-        review.text
-      );
+    if (!reviewAlreadyExists) {
+      await add(review.date, review.postcode, review.title, review.text);
       // increase the count for reviews that have been added to the database
       output.reviewsAdded++;
     }
