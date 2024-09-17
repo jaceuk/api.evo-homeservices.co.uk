@@ -1,7 +1,6 @@
 // NOTE: if there is a problem running puppeteer with locating Chromium
 // run 'node node_modules/puppeteer/install.js' to force the installation
 
-const fs = require('fs-extra');
 const puppeteer = require('puppeteer');
 const reviews = require('./utils/reviews.js');
 const utils = require('./utils/utils.js');

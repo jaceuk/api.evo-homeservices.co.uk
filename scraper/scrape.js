@@ -1,4 +1,3 @@
-const schedule = require('node-schedule');
 const scraper = require('./latestReviews.scraper.js');
 const sendEmail = require('./sendEmail.js');
 
@@ -9,12 +8,6 @@ const CHECKATRADE_ACCOUNTS = [
   'evoplumbingheatinganddrainageburgesshill',
   'evoplumbingheatinganddrainage241077',
 ];
-
-// * minute * hour * day of month * month * day of week
-// const TIME = '0 1 * * 1';
-const TIME_1 = '10 1 * * 1';
-const TIME_2 = '20 1 * * 1';
-const TIME_3 = '30 1 * * 1';
 
 // send email after successful import
 async function sendImportReport(checkatradeAccount, result) {
@@ -30,6 +23,8 @@ async function sendImportReport(checkatradeAccount, result) {
 
   if (!emailSent || emailSent.rejected != '')
     throw 'There was a problem sending your enquiry, please try again.';
+
+  return;
 }
 
 // send email if there was an import error
@@ -46,6 +41,8 @@ async function sendError(checkatradeAccount, error) {
 
   if (!emailSent || emailSent.rejected != '')
     throw 'There was a problem sending your enquiry, please try again.';
+
+  return;
 }
 
 // schedule.scheduleJob(TIME, async function () {
@@ -58,29 +55,9 @@ async function sendError(checkatradeAccount, error) {
 //   });
 // });
 
-schedule.scheduleJob(TIME_1, async function () {
-  const result = await scraper
-    .scrape(CHECKATRADE_ACCOUNTS[0])
-    .catch((error) => {
-      sendError(CHECKATRADE_ACCOUNTS[0], error);
-    });
-  sendImportReport(CHECKATRADE_ACCOUNTS[0], result);
-});
-
-schedule.scheduleJob(TIME_2, async function () {
-  const result = await scraper
-    .scrape(CHECKATRADE_ACCOUNTS[1])
-    .catch((error) => {
-      sendError(CHECKATRADE_ACCOUNTS[1], error);
-    });
-  sendImportReport(CHECKATRADE_ACCOUNTS[1], result);
-});
-
-schedule.scheduleJob(TIME_3, async function () {
-  const result = await scraper
-    .scrape(CHECKATRADE_ACCOUNTS[2])
-    .catch((error) => {
-      sendError(CHECKATRADE_ACCOUNTS[2], error);
-    });
-  sendImportReport(CHECKATRADE_ACCOUNTS[2], result);
+CHECKATRADE_ACCOUNTS.forEach(async (checkatradeAccount) => {
+  const result = await scraper.scrape(checkatradeAccount).catch((error) => {
+    sendError(checkatradeAccount, error);
+  });
+  await sendImportReport(checkatradeAccount, result);
 });

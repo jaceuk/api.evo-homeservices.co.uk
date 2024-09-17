@@ -21,8 +21,8 @@ app.get('/_health', (req, res) => {
   res.status(200).send('ok');
 });
 
-// add scraper to get data from other sites
-require('./scraper/');
+// add scraper to get data from other sites using an internal schedule
+// require('./scraper/');
 
 const sessionStore = new session.MemoryStore();
 
