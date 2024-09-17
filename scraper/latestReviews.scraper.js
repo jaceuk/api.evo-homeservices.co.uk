@@ -1,16 +1,17 @@
 // NOTE: if there is a problem running puppeteer with locating Chromium
 // run 'node node_modules/puppeteer/install.js' to force the installation
 
-import puppeteer from 'puppeteer';
-import { getReviews } from './utils/reviews.js';
-import { formatDate, delay } from './utils/utils.js';
-import { alreadyExists, add } from '../models/reviews.model.js';
+const puppeteer = require('puppeteer');
+const reviews = require('./utils/reviews.js');
+const utils = require('./utils/utils.js');
+const reviewsModel = require('../models/reviews.model.js');
 
 const CLICK_DELAY = 4000; // 4 secs
-const SCORE_THRESHOLD = 9;
 
-export const scrape = async (checkatradeAccount) => {
-  console.log(checkatradeAccount + 'scrape started ...');
+exports.scrape = async (checkatradeAccount) => {
+  await utils.delay(10000);
+
+  console.log(checkatradeAccount + ' scraping started ...');
 
   let output = {
     reviewsAdded: 0,
@@ -20,7 +21,7 @@ export const scrape = async (checkatradeAccount) => {
   // to be on the safe side the cut-off date will be the past two months
   const currentDate = new Date();
   let cutOffDate = currentDate.setDate(currentDate.getDate() - 42);
-  cutOffDate = formatDate(cutOffDate);
+  cutOffDate = utils.formatDate(cutOffDate);
 
   // Launch the browser
   const browser = await puppeteer.launch({ headless: 'new' });
@@ -38,13 +39,13 @@ export const scrape = async (checkatradeAccount) => {
   // this will return the 20 most recent reviews
   if (seeMoreButton) {
     await seeMoreButton.click();
-    await delay(CLICK_DELAY);
+    await utils.delay(CLICK_DELAY);
     await seeMoreButton.click();
-    await delay(CLICK_DELAY);
+    await utils.delay(CLICK_DELAY);
   }
 
   // get the reviews from the page
-  const allReviews = await getReviews(page, SCORE_THRESHOLD);
+  const allReviews = await reviews.getReviews(page, SCORE_THRESHOLD);
 
   // go through reach review
   allReviews.forEach(async (review) => {
@@ -52,11 +53,19 @@ export const scrape = async (checkatradeAccount) => {
     if (review.date < cutOffDate) return;
 
     // check if the review is already in the database
-    const reviewAlreadyExists = await alreadyExists(review.title, review.text);
+    const alreadyExists = await reviewsModel.alreadyExists(
+      review.title,
+      review.text
+    );
 
     // if the review isn't already in the database then add it
-    if (!reviewAlreadyExists) {
-      await add(review.date, review.postcode, review.title, review.text);
+    if (!alreadyExists) {
+      await reviewsModel.add(
+        review.date,
+        review.postcode,
+        review.title,
+        review.text
+      );
       // increase the count for reviews that have been added to the database
       output.reviewsAdded++;
     }
@@ -67,7 +76,7 @@ export const scrape = async (checkatradeAccount) => {
 
   console.log(`Reviews added: ${output.reviewsAdded}`);
 
-  console.log(checkatradeAccount + 'scrape ended!');
+  console.log(checkatradeAccount + ' scraping ended!');
 
   return output;
 };

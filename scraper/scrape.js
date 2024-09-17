@@ -1,6 +1,5 @@
-import { delay } from './utils/utils.js';
-import { scrape } from './latestReviews.scraper.js';
-import sendEmail from './sendEmail.js';
+const scraper = require('./latestReviews.scraper.js');
+const sendEmail = require('./sendEmail.js');
 
 const EMAIL_FROM = 'noreply@evo-homeservices.co.uk';
 const EMAIL_TO = 'jnewington@gmail.com';
@@ -9,7 +8,6 @@ const CHECKATRADE_ACCOUNTS = [
   'evoplumbingheatinganddrainageburgesshill',
   'evoplumbingheatinganddrainage241077',
 ];
-const SCRAPE_DELAY = 10000; // 10 secs
 
 // send email after successful import
 async function sendImportReport(checkatradeAccount, result) {
@@ -47,31 +45,9 @@ async function sendError(checkatradeAccount, error) {
   return;
 }
 
-// schedule.scheduleJob(TIME, async function () {
-//   // get latest reviews for each checkatrade account
-//   CHECKATRADE_ACCOUNTS.forEach(async (checkatradeAccount) => {
-//     const result = await scraper.scrape(checkatradeAccount).catch((error) => {
-//       sendError(checkatradeAccount, error);
-//     });
-//     sendImportReport(checkatradeAccount, result);
-//   });
-// });
-
-const result1 = await scrape(CHECKATRADE_ACCOUNTS[0]).catch((error) => {
-  sendError(CHECKATRADE_ACCOUNTS[0], error);
+CHECKATRADE_ACCOUNTS.forEach(async (checkatradeAccount) => {
+  const result = await scraper.scrape(checkatradeAccount).catch((error) => {
+    sendError(checkatradeAccount, error);
+  });
+  await sendImportReport(checkatradeAccount, result);
 });
-await sendImportReport(CHECKATRADE_ACCOUNTS[0], result1);
-
-delay(SCRAPE_DELAY);
-
-const result2 = await scrape(CHECKATRADE_ACCOUNTS[1]).catch((error) => {
-  sendError(CHECKATRADE_ACCOUNTS[1], error);
-});
-await sendImportReport(CHECKATRADE_ACCOUNTS[1], result2);
-
-delay(SCRAPE_DELAY);
-
-const result3 = await scrape(CHECKATRADE_ACCOUNTS[2]).catch((error) => {
-  sendError(CHECKATRADE_ACCOUNTS[2], error);
-});
-await sendImportReport(CHECKATRADE_ACCOUNTS[2], result3);
