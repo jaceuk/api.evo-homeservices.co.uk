@@ -9,8 +9,6 @@ const reviewsModel = require('../models/reviews.model.js');
 const CLICK_DELAY = 4000; // 4 secs
 
 exports.scrape = async (checkatradeAccount) => {
-  await utils.delay(10000);
-
   console.log(checkatradeAccount + ' scraping started ...');
 
   let output = {
