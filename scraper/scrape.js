@@ -55,9 +55,11 @@ async function sendError(checkatradeAccount, error) {
 //   });
 // });
 
-CHECKATRADE_ACCOUNTS.forEach(async (checkatradeAccount) => {
-  const result = await scraper.scrape(checkatradeAccount).catch((error) => {
-    sendError(checkatradeAccount, error);
-  });
-  await sendImportReport(checkatradeAccount, result);
+CHECKATRADE_ACCOUNTS.forEach((checkatradeAccount) => {
+  setTimeout(async () => {
+    const result = await scraper.scrape(checkatradeAccount).catch((error) => {
+      sendError(checkatradeAccount, error);
+    });
+    await sendImportReport(checkatradeAccount, result);
+  }, 5000);
 });
