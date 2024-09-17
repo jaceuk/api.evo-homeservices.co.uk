@@ -10,7 +10,7 @@ const CLICK_DELAY = 4000; // 4 secs
 const SCORE_THRESHOLD = 9;
 
 exports.scrape = async (checkatradeAccount) => {
-  console.log('Scrape started ...');
+  console.log(checkatradeAccount + 'scrape started ...');
 
   let output = {
     reviewsAdded: 0,
@@ -74,6 +74,8 @@ exports.scrape = async (checkatradeAccount) => {
   await browser.close();
 
   console.log(`Reviews added: ${output.reviewsAdded}`);
+
+  console.log(checkatradeAccount + 'scrape ended!');
 
   return output;
 };
