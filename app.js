@@ -24,8 +24,6 @@ app.get('/_health', (req, res) => {
 // add scraper to get data from other sites using an internal schedule
 require('./scraper/');
 
-// testing webhook push
-
 const sessionStore = new session.MemoryStore();
 
 // view engine setup
