@@ -1,7 +1,8 @@
 // NOTE: if there is a problem running puppeteer with locating Chromium
 // run 'node node_modules/puppeteer/install.js' to force the installation
 
-const puppeteer = require('puppeteer');
+const puppeteerExtra = require('puppeteer-extra');
+const pluginStealth = require('puppeteer-extra-plugin-stealth');
 const reviews = require('./utils/reviews.js');
 const utils = require('./utils/utils.js');
 const reviewsModel = require('../models/reviews.model.js');
@@ -17,7 +18,8 @@ exports.scrape = async (checkatradeAccount) => {
   };
 
   // Launch the browser
-  const browser = await puppeteer.launch({ headless: 'new' });
+  puppeteerExtra.use(pluginStealth());
+  const browser = await puppeteerExtra.launch({ headless: 'new' });
 
   // Create a page
   const page = await browser.newPage();
