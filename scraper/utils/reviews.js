@@ -1,7 +1,7 @@
 const utils = require('./utils.js');
 
 function formatPostcode(oldPostcode) {
-  return oldPostcode.replace('Location: ', '');
+  return oldPostcode.replace('Job location: ', '');
 }
 
 function cleanContent(string) {
@@ -24,33 +24,43 @@ exports.getReviews = async (page, scoreThreshold) => {
   // Go through each page and grab the reviews
   const titles = await page.evaluate(() =>
     Array.from(
-      document.querySelectorAll('ul[aria-label="Reviews"] li h4'),
+      document.querySelectorAll('ul li h3'),
       (element) => element.textContent
     )
   );
+
   const text = await page.evaluate(() =>
     Array.from(
-      document.querySelectorAll('ul[aria-label="Reviews"] li p'),
+      document.querySelectorAll('ul li > div > div'),
       (element) => element.textContent
     )
   );
-  const postcodes = await page.evaluate(() =>
+
+  let postcodes = await page.evaluate(() =>
     Array.from(
-      document.querySelectorAll('ul[aria-label="Reviews"] li address'),
+      document.querySelectorAll('ul li > span'),
       (element) => element.textContent
     )
   );
-  const dates = await page.evaluate(() =>
+  // remove any empty values
+  postcodes = postcodes.filter(function (e) {
+    return e; // Returns only the truthy values
+  });
+
+  let dates = await page.evaluate(() =>
     Array.from(
-      document.querySelectorAll('ul[aria-label="Reviews"] li time'),
+      document.querySelectorAll('ul li > section > p'),
       (element) => element.textContent
     )
   );
+  // remove any text
+  dates = dates.filter(function (e) {
+    return e.replace('Posted ', ''); // Returns cleaned up dates
+  });
+
   const scores = await page.evaluate(() =>
     Array.from(
-      document.querySelectorAll(
-        'ul[aria-label="Reviews"] li span[aria-label^="Review score"]'
-      ),
+      document.querySelectorAll('ul li > section > span'),
       (element) => element.textContent
     )
   );
@@ -76,7 +86,7 @@ exports.getReviews = async (page, scoreThreshold) => {
       formattedText &&
       formattedPostcode &&
       formattedTitle &&
-      formattedDate
+      !formattedDate.includes('NaN')
     )
       reviews.push(review); // only include reviews above 9 and no empty fields
   }

@@ -7,6 +7,7 @@ const utils = require('./utils/utils.js');
 const reviewsModel = require('../models/reviews.model.js');
 
 const CLICK_DELAY = 4000; // 4 secs
+const SCORE_THRESHOLD = 9;
 
 exports.scrape = async (checkatradeAccount) => {
   console.log(checkatradeAccount + ' scraping started ...');
@@ -14,12 +15,6 @@ exports.scrape = async (checkatradeAccount) => {
   let output = {
     reviewsAdded: 0,
   };
-
-  // we only need to grab reviews from the past month
-  // to be on the safe side the cut-off date will be the past two months
-  const currentDate = new Date();
-  let cutOffDate = currentDate.setDate(currentDate.getDate() - 42);
-  cutOffDate = utils.formatDate(cutOffDate);
 
   // Launch the browser
   const browser = await puppeteer.launch({ headless: 'new' });
@@ -30,26 +25,66 @@ exports.scrape = async (checkatradeAccount) => {
   // get the results page
   await page.goto(`https://www.checkatrade.com/trades/${checkatradeAccount}`);
 
-  // locate the 'See more reviews' button
-  const seeMoreButton = await page.$('button[data-guid="More reviews"]');
+  // locate the 'See all reviews' button and click it
+  await page.$$eval('button', (buttons) => {
+    for (const button of buttons) {
+      if (button.textContent === 'See all reviews') {
+        button.click();
+        break; // Clicking the first matching button and exiting the loop
+      }
+    }
+  });
 
-  // click on the 'See more reviews' button twice
-  // this will return the 20 most recent reviews
-  if (seeMoreButton) {
-    await seeMoreButton.click();
-    await utils.delay(CLICK_DELAY);
-    await seeMoreButton.click();
-    await utils.delay(CLICK_DELAY);
+  await utils.delay(CLICK_DELAY);
+
+  // locate the 'Last 30 days' text and click on it to select the radio button
+  // we only need to grab reviews from the past month
+  await page.$$eval('span', (spans) => {
+    for (const span of spans) {
+      if (span.textContent === 'Last 30 days') {
+        span.click();
+        break; // Clicking the first matching button and exiting the loop
+      }
+    }
+  });
+
+  // locate the 'Show reviews' button and click on it
+  await page.$$eval('button', (buttons) => {
+    for (const button of buttons) {
+      if (button.textContent === 'Show reviews') {
+        button.click();
+        break; // Clicking the first matching button and exiting the loop
+      }
+    }
+  });
+
+  await utils.delay(CLICK_DELAY);
+
+  // click the 'Load more reviews' button until there are now more reviews
+  const isElementVisible = async (page, cssSelector) => {
+    let visible = true;
+    await page
+      .waitForSelector(cssSelector, { visible: true, timeout: 2000 })
+      .catch(() => {
+        visible = false;
+      });
+    return visible;
+  };
+
+  const selectorForLoadMoreButton = 'button[aria-label="Load more reviews"]';
+
+  let loadMoreVisible = await isElementVisible(page, selectorForLoadMoreButton);
+  while (loadMoreVisible) {
+    await page.click(selectorForLoadMoreButton).catch(() => {});
+    loadMoreVisible = await isElementVisible(page, selectorForLoadMoreButton);
   }
 
   // get the reviews from the page
   const allReviews = await reviews.getReviews(page, SCORE_THRESHOLD);
 
+  // update database with new reviews
   // go through reach review
   allReviews.forEach(async (review) => {
-    // we're only interested in reviews within the cutoff period
-    if (review.date < cutOffDate) return;
-
     // check if the review is already in the database
     const alreadyExists = await reviewsModel.alreadyExists(
       review.title,
