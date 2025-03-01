@@ -58,29 +58,29 @@ async function sendError(checkatradeAccount, error) {
 //   });
 // });
 
-schedule.scheduleJob(TIME_1, async function () {
-  const result = await scraper
-    .scrape(CHECKATRADE_ACCOUNTS[0])
-    .catch((error) => {
-      sendError(CHECKATRADE_ACCOUNTS[0], error);
-    });
-  sendImportReport(CHECKATRADE_ACCOUNTS[0], result);
-});
+// schedule.scheduleJob(TIME_1, async function () {
+//   const result = await scraper
+//     .scrape(CHECKATRADE_ACCOUNTS[0])
+//     .catch((error) => {
+//       sendError(CHECKATRADE_ACCOUNTS[0], error);
+//     });
+//   sendImportReport(CHECKATRADE_ACCOUNTS[0], result);
+// });
 
-schedule.scheduleJob(TIME_2, async function () {
-  const result = await scraper
-    .scrape(CHECKATRADE_ACCOUNTS[1])
-    .catch((error) => {
-      sendError(CHECKATRADE_ACCOUNTS[1], error);
-    });
-  sendImportReport(CHECKATRADE_ACCOUNTS[1], result);
-});
+// schedule.scheduleJob(TIME_2, async function () {
+//   const result = await scraper
+//     .scrape(CHECKATRADE_ACCOUNTS[1])
+//     .catch((error) => {
+//       sendError(CHECKATRADE_ACCOUNTS[1], error);
+//     });
+//   sendImportReport(CHECKATRADE_ACCOUNTS[1], result);
+// });
 
-schedule.scheduleJob(TIME_3, async function () {
-  const result = await scraper
-    .scrape(CHECKATRADE_ACCOUNTS[2])
-    .catch((error) => {
-      sendError(CHECKATRADE_ACCOUNTS[2], error);
-    });
-  sendImportReport(CHECKATRADE_ACCOUNTS[2], result);
-});
+// schedule.scheduleJob(TIME_3, async function () {
+//   const result = await scraper
+//     .scrape(CHECKATRADE_ACCOUNTS[2])
+//     .catch((error) => {
+//       sendError(CHECKATRADE_ACCOUNTS[2], error);
+//     });
+//   sendImportReport(CHECKATRADE_ACCOUNTS[2], result);
+// });
